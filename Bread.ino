@@ -1,64 +1,68 @@
 //3 pins, one blue, one red, one yellow
-int yellowLED = 1;
-int redLED = 2;
-int blueLED = 3;
-
-//1 sensor, our thermsistor (analog)
+int YELLOW_LED = 1;
+int RED_LED = 2;
+int BLUE_LED = 3;
 int sensor = A0;
-int resistance;
+
+//LEDS
+int resistance = 0;
 int bound1 = 0;
 int bound2 = 0;
 int bound3 = 0;
-float temperature;
 
-//constants for stienhart
-int A = 0;
-int B = 0;
-int C = 0;
+//constants for equation?
+int salinity = 0;
 
-
-//runs when the board is powered up
 void setup() 
 {
-    //set the LEDs to output
-    pinMode(yellowLED, OUTPUT);
-    pinMode(redLED, OUTPUT);
-    pinMode(blueLED, OUTPUT);
+    pinMode(YELLOW_LED, OUTPUT);
+    pinMode(RED_LED, OUTPUT);
+    pinMode(BLUE_LED, OUTPUT);
 
-    //set the sensor to input
     pinMode(sensor, INPUT);
 
     Serial.begin(9600);
 }
-//Runs constantly after after setup
 void loop() 
 {
     resistance = analogRead(sensor);
+    digitalWrite(RED_LED, HIGH);
+    digitalWrite(YELLOW_LED, HIGH);
+    digitalWrite(BLUE_LED, HIGH);
 
-    //calculate the temperature
-    temperature = voltageToTemp(resistance);
+    //get salinity using resitance
+    salinity = (resistance * 0.01);
 
-    if(temperature < bound1)
+    if (salinity <= 0.1)
     {
-        digitalWrite(redLED, HIGH);
+        digitalWrite(RED_LED, LOW);
+        digitalWrite(YELLOW_LED, LOW);
+        digitalWrite(BLUE_LED, HIGH);
     }
-        if(temperature < bound2)
+    else if (salinity > 0.1 && salinity < 0.2)
     {
-        digitalWrite(yellowLED, HIGH);
+        digitalWrite(RED_LED, LOW);
+        digitalWrite(YELLOW_LED, HIGH);
+        digitalWrite(BLUE_LED, LOW);
     }
-        if(temperature < bound3)
+    else if (salinity >= 0.2 && salinity <= 0.3)
     {
-        digitalWrite(blueLED, HIGH);
+        digitalWrite(RED_LED, HIGH);
+        digitalWrite(YELLOW_LED, LOW);
+        digitalWrite(BLUE_LED, LOW);
+    }
+    else if (salinity > 0.3)
+    {
+        digitalWrite(RED_LED, HIGH);
+        digitalWrite(YELLOW_LED, HIGH);
+        digitalWrite(BLUE_LED, HIGH);
     }
 
     Serial.print("Resistance: ");
     Serial.print(resistance);
     Serial.println(" Ohms");
+    Serial.print("Resistance: ");
+    Serial.print(salinity);
+    Serial.println(" oom");
     delay(1000);
-}
-
-int voltageToTemp(int resistance)
-{
-    //convert voltage to temperature for nichrome using Steinhart-Hart equation
-    //https://en.wikipedia.org/wiki/Steinhart%E2%80%93Hart_equation
 }
