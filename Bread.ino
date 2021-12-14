@@ -5,7 +5,7 @@ int BLUE_LED = 3;
 int sensor = A0;
 
 //LEDS
-int resistance = 0;
+int voltage = 0;
 int bound1 = 0;
 int bound2 = 0;
 int bound3 = 0;
@@ -25,13 +25,13 @@ void setup()
 }
 void loop() 
 {
-    resistance = analogRead(sensor);
+    voltage = analogRead(sensor);
     digitalWrite(RED_LED, HIGH);
     digitalWrite(YELLOW_LED, HIGH);
     digitalWrite(BLUE_LED, HIGH);
 
     //get salinity using resitance
-    salinity = (resistance * 0.01);
+    salinity = (voltage * 0.01);
 
     if (salinity <= 0.1)
     {
@@ -58,11 +58,11 @@ void loop()
         digitalWrite(BLUE_LED, HIGH);
     }
 
-    Serial.print("Resistance: ");
-    Serial.print(resistance);
+    Serial.print("Voltage: ");
+    Serial.print(voltage);
     Serial.println(" Ohms");
-    Serial.print("Resistance: ");
+    Serial.print("Salinity: ");
     Serial.print(salinity);
-    Serial.println(" oom");
+    Serial.println(" ppm");
     delay(1000);
 }
