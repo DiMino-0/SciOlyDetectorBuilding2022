@@ -1,2 +1,2 @@
 # Detector---Science-Olympiads
-Takes in resitance from a thermsistor and converts it to temperature and salinity. Provides a live display of the data, also lights LEDs in accordance to set bounds. 
+Takes in resitance from a sensor placed in salt water and converts it to a voltage and displays the salinity.
