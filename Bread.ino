@@ -3,65 +3,61 @@ int BOUND_1 = 1000;
 int BOUND_2 = 2000;
 int BOUND_3 = 3000;
 
-int YELLOW_LED = 1;
+int BLUE_LED = 1;
 int RED_LED = 2;
-int BLUE_LED = 3;
-
+int GREEN_LED = 3;
 int SENSOR = A0;
-double input = 0;
+
 double voltage = 0;
 int salinity = 0;
 
-void setup() 
+void setup()
 {
-    pinMode(YELLOW_LED, OUTPUT);
-    pinMode(RED_LED, OUTPUT);
-    pinMode(BLUE_LED, OUTPUT);
+  pinMode(BLUE_LED, OUTPUT);
+  pinMode(RED_LED, OUTPUT);
+  pinMode(GREEN_LED, OUTPUT);
 
-    pinMode(SENSOR, INPUT);
+  pinMode(SENSOR, INPUT);
 
-    Serial.begin(9600);
+  Serial.begin(9600);
 }
-void loop() 
+void loop()
 {
-    //4.9 m/v per unit
-    input = analogRead(SENSOR);
+  //4.9 mV per unit
+  voltage = analogRead(SENSOR);
 
-    //ADC equation
-    voltage = input * (5.0/1023.0);
+  //Voltage to PPM equation
+  salinity = (voltage * 57.6) - 38233;
 
-    //Voltage to PPM equation
-    salinity = (voltage * 0.01);
+  //BOUNDS to light the LEDs
+  if (salinity <= BOUND_1)
+  {
+    digitalWrite(BLUE_LED, HIGH);
+    digitalWrite(RED_LED, LOW);
+    digitalWrite(GREEN_LED, LOW);
+  }
+  else if (salinity > BOUND_1 && salinity <= BOUND_2)
+  {
+    digitalWrite(BLUE_LED, LOW);
+    digitalWrite(RED_LED, HIGH);
+    digitalWrite(GREEN_LED, LOW);
+  }
+  else if (salinity > BOUND_2 && salinity <= BOUND_3)
+  {
+    digitalWrite(BLUE_LED, LOW);
+    digitalWrite(RED_LED, LOW);
+    digitalWrite(GREEN_LED, HIGH);
+  }
 
-    //BOUNDS to highlight the LEDs
-    if (salinity <= BOUND_1)
-    {
-        digitalWrite(RED_LED, HIGH);
-        digitalWrite(YELLOW_LED, LOW);
-        digitalWrite(BLUE_LED, LOW);
-    }
-    else if (salinity > BOUND_1 && salinity <= BOUND_2)
-    {
-        digitalWrite(RED_LED, LOW);
-        digitalWrite(YELLOW_LED, HIGH);
-        digitalWrite(BLUE_LED, LOW);
-    }
-    else if (salinity > BOUND_2 && salinity <= BOUND_3)
-    {
-        digitalWrite(RED_LED, LOW);
-        digitalWrite(YELLOW_LED, LOW);
-        digitalWrite(BLUE_LED, HIGH);
-    }
+  //output to the serial monitor
+  Serial.print("Voltage: ");
+  Serial.print(voltage);
+  Serial.print(" mV");
+  Serial.print(" and ");
+  Serial.print("Salinity: ");
+  Serial.print(salinity);
+  Serial.println(" ppm");
 
-    //output to the serial monitor
-    Serial.print("Voltage: ");
-    Serial.print(voltage);
-    Serial.print(" V");
-    Serial.print(" and ");
-    Serial.print("Salinity: ");
-    Serial.print(salinity);
-    Serial.println(" ppm");
-
-    //In milliseconds
-    delay(8000);
+  //In milliseconds
+  delay(3000);
 }
